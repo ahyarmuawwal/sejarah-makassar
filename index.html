@@ -3,33 +3,709 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sejarah Kota Makassar</title>
+    <title>Sejarah Kota Makassar - Garis Waktu & Peradaban</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Proteksi Seleksi dan Drag */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        /* Mencegah interaksi langsung simpan gambar */
+        img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* Proteksi Cetak / Print to PDF */
+        @media print {
+            body {
+                display: none !important;
+            }
+        }
+
+        /* Custom Scrollbar Elegan */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Transisi Zoom */
+        .smooth-zoom {
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex items-center justify-center p-4">
-    
-    <main class="max-w-xl w-full bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200 p-8">
-        <header class="text-center mb-6">
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Sejarah & Peradaban</span>
-            <h1 class="text-2xl font-bold text-slate-900 mt-3">Sejarah Kota Makassar</h1>
-        </header>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-transparent" oncontextmenu="return false;" ondragstart="return false;">
 
-        <!-- Posisi Logo di Tengah dengan proteksi agar tidak bisa didownload/dicuri -->
-        <div class="flex justify-center mb-6">
-            <img src="logo.png" alt="Logo" class="h-20 w-auto object-contain select-none pointer-events-none" draggable="false" oncontextmenu="return false;">
+    <!-- TOAST PERINGATAN PROTEKSI HAK CIPTA -->
+    <div id="protectionToast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-amber-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-none border border-amber-400">
+        <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span class="text-sm font-medium">Materi sejarah ini dilindungi hak cipta. Klik kanan dan pengunduhan dinonaktifkan.</span>
+    </div>
+
+    <!-- HEADER & NAVBAR -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center space-x-4">
+                <!-- Logo Instalasi dengan Pelindung -->
+                <div class="relative bg-white/10 p-2 rounded-xl backdrop-blur-sm border border-white/10 flex items-center justify-center">
+                    <img src="logo.png" alt="Logo Sejarah Makassar" class="h-10 w-auto object-contain" draggable="false" oncontextmenu="return false;">
+                    <div class="absolute inset-0 bg-transparent" oncontextmenu="return false;"></div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Sejarah & Peradaban</span>
+                        <span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> 13 Panel Sejarah
+                        </span>
+                    </div>
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight mt-0.5">Sejarah Kota Makassar</h1>
+                </div>
+            </div>
+
+            <!-- SEARCH / FILTER -->
+            <div class="w-full sm:w-80">
+                <div class="relative">
+                    <input type="text" id="searchInput" placeholder="Cari topik sejarah (cth: Hasanuddin, Somba Opu, 8a)..." 
+                        class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
         </div>
+    </header>
 
-        <section class="text-slate-600 text-justify leading-relaxed space-y-4">
-            <p>
-                Kota Makassar memiliki sejarah panjang sebagai salah satu pusat perdagangan maritim terbesar di Nusantara sejak abad ke-16 di bawah kejayaan Kerajaan Gowa-Tallo. Pelabuhan Somba Opu menjadi titik temu para pedagang dari berbagai belahan dunia, mulai dari Asia hingga Eropa, yang memperkuat posisi strategis kota ini. Masuknya pengaruh Islam dan perjuangan pahlawan nasional seperti Sultan Hasanuddin melawan kolonialisme turut membentuk identitas keberanian masyarakatnya. Seiring perjalanan waktu, kota ini sempat berganti nama menjadi Ujung Pandang sebelum akhirnya kembali menggunakan nama historisnya, Makassar. Kini, Makassar berkembang pesat sebagai kota metropolitan modern yang tetap menjaga warisan budaya dan sejarah masa lampaunya.
-            </p>
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- INTRO CARD HISTORIS -->
+        <section class="bg-gradient-to-br from-slate-900/90 via-slate-900 to-amber-950/20 border border-slate-800 rounded-2xl p-6 sm:p-8 mb-8 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="max-w-4xl mx-auto text-center space-y-4 relative z-10">
+                <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+                    Warisan Sejarah Maritim & Perjuangan Nusantara
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    Menelusuri Jejak Kejayaan Kota Makassar Dari Abad ke-16 Hingga Era Modern
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed text-justify sm:text-center">
+                    Kota Makassar memiliki sejarah panjang sebagai salah satu pusat perdagangan maritim terbesar di Nusantara sejak abad ke-16 di bawah kejayaan Kerajaan Gowa-Tallo. Pelabuhan Somba Opu menjadi titik temu para pedagang dari berbagai belahan dunia, mulai dari Asia hingga Eropa, yang memperkuat posisi strategis kota ini. Masuknya pengaruh Islam dan perjuangan pahlawan nasional seperti Sultan Hasanuddin melawan kolonialisme turut membentuk identitas keberanian masyarakatnya. Seiring perjalanan waktu, kota ini sempat berganti nama menjadi Ujung Pandang sebelum akhirnya kembali menggunakan nama historisnya, Makassar. Kini, Makassar berkembang pesat sebagai kota metropolitan modern yang tetap menjaga warisan budaya dan sejarah masa lampaunya.
+                </p>
+                <div class="pt-2 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
+                    <span class="flex items-center gap-1.5 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg> Klik gambar materi untuk memperbesar (Zoom)
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg> Proteksi Anti Klik Kanan & Anti Unduh
+                    </span>
+                </div>
+            </div>
         </section>
 
-        <footer class="mt-8 text-center text-xs text-slate-400 border-t border-slate-100 pt-4">
-            &copy; 2026 Dee Management - wasdlabs.
-        </footer>
+        <!-- GRID GALERI SEJARAH -->
+        <div id="historyGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <!-- Kartu sejarah 1 s.d. 12 di-render otomatis secara berurutan -->
+        </div>
+
+        <!-- NOT FOUND STATE -->
+        <div id="noResults" class="hidden text-center py-16">
+            <svg class="w-12 h-12 mx-auto text-slate-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-slate-400 font-medium">Materi sejarah dengan kata kunci tersebut tidak ditemukan.</p>
+        </div>
+
     </main>
 
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                <p>&copy; 2026 Dee Management - wasdlabs. Sejarah Kota Makassar. Seluruh Hak Cipta Dilindungi.</p>
+            </div>
+            <p class="text-slate-500 text-[11px]">Sistem instalasi galeri digital dengan enkapsulasi proteksi materi online.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL LIGHTBOX & ZOOM VIEWPORT -->
+    <div id="zoomModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex-col justify-between opacity-0 transition-opacity duration-300 select-none">
+        
+        <!-- TOP CONTROL BAR -->
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3 bg-black/60 border-b border-white/10 z-30">
+            <div class="flex items-center space-x-3 overflow-hidden">
+                <span id="modalNumberBadge" class="bg-amber-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded-md flex-shrink-0">
+                    #1
+                </span>
+                <div class="truncate">
+                    <h3 id="modalTitle" class="text-sm sm:text-base font-semibold text-white truncate max-w-[200px] sm:max-w-md">
+                        Benteng Somba Opu
+                    </h3>
+                    <p id="modalSubtitle" class="text-[11px] text-amber-400/80 truncate hidden sm:block">
+                        Pusat Pertahanan & Perdagangan Kerajaan Gowa
+                    </p>
+                </div>
+                <span id="modalCounter" class="text-xs text-slate-400 hidden md:inline-block flex-shrink-0">
+                    (1 / 13)
+                </span>
+            </div>
+
+            <!-- ZOOM & CLOSE ACTION BUTTONS -->
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <!-- Zoom Out -->
+                <button id="btnZoomOut" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all focus:outline-none" title="Perkecil (-)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                    </svg>
+                </button>
+                <!-- Zoom Reset -->
+                <button id="btnZoomReset" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-all focus:outline-none" title="Reset Zoom">
+                    <span id="zoomLevelText">100%</span>
+                </button>
+                <!-- Zoom In -->
+                <button id="btnZoomIn" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all focus:outline-none" title="Perbesar (+)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+                
+                <div class="w-px h-6 bg-white/20 mx-1"></div>
+
+                <!-- Close Modal -->
+                <button id="btnCloseModal" class="p-2 rounded-lg bg-red-500/20 hover:bg-red-500 text-white transition-all focus:outline-none" title="Tutup (ESC)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN IMAGE VIEWPORT AREA -->
+        <div id="modalViewport" class="relative flex-1 overflow-hidden flex items-center justify-center p-2 sm:p-4 cursor-grab">
+            
+            <!-- TRANSFORM CONTAINER -->
+            <div id="modalTransformContainer" class="relative max-h-full max-w-full flex items-center justify-center smooth-zoom">
+                <img id="modalImg" src="" alt="Materi Sejarah Makassar" class="max-h-[82vh] w-auto max-w-full object-contain rounded-lg shadow-2xl pointer-events-none select-none" draggable="false" oncontextmenu="return false;">
+                
+                <!-- SHIELD OVERLAY PROTEKSI (Mencegah klik kanan langsung / drag / save) -->
+                <div id="modalShield" class="absolute inset-0 bg-transparent z-20" oncontextmenu="return false;"></div>
+            </div>
+
+            <!-- PREVIOUS BUTTON -->
+            <button id="btnPrev" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-black/60 hover:bg-amber-500 hover:text-black border border-white/20 text-white transition-all shadow-xl focus:outline-none group" title="Sebelumnya (Panah Kiri)">
+                <svg class="w-6 h-6 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <!-- NEXT BUTTON -->
+            <button id="btnNext" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-black/60 hover:bg-amber-500 hover:text-black border border-white/20 text-white transition-all shadow-xl focus:outline-none group" title="Berikutnya (Panah Kanan)">
+                <svg class="w-6 h-6 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- BOTTOM HINT BAR -->
+        <div class="px-4 py-2.5 bg-black/70 border-t border-white/10 text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-4 z-30">
+            <span>💡 <b>Tips:</b> Klik 2x pada gambar untuk zoom cepat</span>
+            <span>•</span>
+            <span>Gunakan tombol <b>+</b> / <b>-</b> atau scroll mouse untuk zoom</span>
+            <span>•</span>
+            <span>Gunakan panah <b>&larr;</b> / <b>&rarr;</b> untuk navigasi</span>
+            <span>•</span>
+            <span class="text-amber-400 font-medium">Materi Sejarah Makassar Dilindungi Hak Cipta</span>
+        </div>
+    </div>
+
+    <!-- SCRIPT DATA & INTERAKTIF -->
+    <script>
+        // DAFTAR LENGKAP 13 PANEL SEJARAH KOTA MAKASSAR TERURUT 1 S.D. 12
+        const sejarahData = [
+            {
+                num: "1",
+                file: "1. BENTENG SOMBA OPU.png",
+                title: "Benteng Somba Opu",
+                subtitle: "Pusat Pertahanan & Perdagangan Kerajaan Gowa",
+                desc: "Pusat pemerintahan dan pelabuhan internasional tempat bersandarnya kapal dagang dari Asia hingga Eropa."
+            },
+            {
+                num: "2",
+                file: "2. LOJI.png",
+                title: "Loji Niaga Asing",
+                subtitle: "Pos Dagang Internasional di Makassar",
+                desc: "Pos dan kantor dagang bangsa Portugis, Inggris, Denmark, dan VOC yang menjadi bukti keterbukaan maritim Makassar."
+            },
+            {
+                num: "3",
+                file: "3. SULTAN HASANUDDIN.png",
+                title: "Sultan Hasanuddin",
+                subtitle: "Ayam Jantan Dari Timur (1631 - 1670)",
+                desc: "Raja Gowa ke-16 yang memimpin perjuangan gigih mempertahankan kedaulatan laut dan kebebasan perniagaan dari monopoli VOC."
+            },
+            {
+                num: "4",
+                file: "4. PERANG MAKASSAR.png",
+                title: "Perang Makassar",
+                subtitle: "Konflik Maritim & Darat Terbesar Abad ke-17",
+                desc: "Perang dahsyat antara pasukan Kerajaan Gowa-Tallo melawan koalisi VOC demi memperebutkan kendali rute perdagangan rempah."
+            },
+            {
+                num: "5",
+                file: "5. PERJANJIAN BUNGAYA.png",
+                title: "Perjanjian Bungaya",
+                subtitle: "Titik Balik Geopolitik 18 November 1667",
+                desc: "Perjanjian bersejarah antara Sultan Hasanuddin dan Cornelis Speelman yang mengubah lanskap politik di Nusantara Timur."
+            },
+            {
+                num: "6",
+                file: "6. BENTENG ROTTERDAM.png",
+                title: "Benteng Rotterdam",
+                subtitle: "Benteng Ujung Pandang & Pusat Kekuasaan",
+                desc: "Awalnya Benteng Ujung Pandang milik Kerajaan Gowa (1545), kemudian direkonstruksi menjadi Fort Rotterdam oleh pihak Belanda."
+            },
+            {
+                num: "7",
+                file: "7. HUKUM LAUT AMANNA GAPPA.png",
+                title: "Hukum Laut Amanna Gappa",
+                subtitle: "Kitab Hukum Maritim & Pelayaran Nusantara",
+                desc: "Karya monumental Matoa Amanna Gappa yang mengatur etika berlayar, bagi hasil, dan perdagangan samudra para pelaut Bugis-Makassar."
+            },
+            {
+                num: "8a",
+                file: "8a. DIASPORA MAKASSAR.png",
+                title: "Diaspora Pelaut Makassar",
+                subtitle: "Jejak Pelaut Bugis-Makassar Mendunia",
+                desc: "Ketangguhan pelaut dan perantau Makassar menjelajah hingga ke Semenanjung Melayu, Madagaskar, hingga pantai utara Australia (Marege)."
+            },
+            {
+                num: "8b",
+                file: "8b. SYECH YUSUF.png",
+                title: "Syekh Yusuf Al-Makassari",
+                subtitle: "Ulama Pejuang & Pahlawan di 2 Negara",
+                desc: "Tokoh sufi besar dan pejuang anti-kolonialisme asal Makassar yang menjadi Pahlawan Nasional Indonesia dan Pahlawan Afrika Selatan."
+            },
+            {
+                num: "9",
+                file: "9. PELABUHAN MAKASSAR.png",
+                title: "Pelabuhan Makassar",
+                subtitle: "Gerbang Bahari Utama Indonesia Timur",
+                desc: "Perjalanan sejarah pelabuhan strategis penghubung rute perdagangan antarpulau dan pintu gerbang kawasan timur nusantara."
+            },
+            {
+                num: "11a",
+                file: "11a. lambang kota makassar zaman kolonial.png",
+                title: "Lambang Kota Zaman Kolonial",
+                subtitle: "Gemeente Makassar Era Hindia Belanda",
+                desc: "Simbol dan lambang resmi kota saat Makassar berstatus Kotapraja (Gemeente) di bawah pemerintahan kolonial Belanda (1906)."
+            },
+            {
+                num: "11b",
+                file: "11b. LAMBANG KOTA MAKASSAR SEKARANG.png",
+                title: "Lambang Kota Makassar Sekarang",
+                subtitle: "Simbol Kedaulatan & Identitas Maritim",
+                desc: "Representasi perahu pinisi, benteng kembar, dan semboyan kearifan lokal yang melambangkan keperkasaan serta kemakmuran warga kota."
+            },
+            {
+                num: "12",
+                file: "12. PERUBAHAN NAMA.png",
+                title: "Perubahan Nama Kota",
+                subtitle: "Makassar - Ujung Pandang - Makassar",
+                desc: "Dinamika sejarah penetapan nama wilayah dari Makassar, sempat berganti menjadi Ujung Pandang (1971), hingga kembali ke nama Makassar (1999)."
+            }
+        ];
+
+        let currentIndex = 0;
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        const historyGrid = document.getElementById('historyGrid');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        // Modal Elements
+        const zoomModal = document.getElementById('zoomModal');
+        const modalImg = document.getElementById('modalImg');
+        const modalTransformContainer = document.getElementById('modalTransformContainer');
+        const modalShield = document.getElementById('modalShield');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSubtitle = document.getElementById('modalSubtitle');
+        const modalNumberBadge = document.getElementById('modalNumberBadge');
+        const modalCounter = document.getElementById('modalCounter');
+        const zoomLevelText = document.getElementById('zoomLevelText');
+        const modalViewport = document.getElementById('modalViewport');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const btnCloseModal = document.getElementById('btnCloseModal');
+        const btnZoomIn = document.getElementById('btnZoomIn');
+        const btnZoomOut = document.getElementById('btnZoomOut');
+        const btnZoomReset = document.getElementById('btnZoomReset');
+        const protectionToast = document.getElementById('protectionToast');
+
+        // NOTIFIKASI TOAST PERINGATAN PROTEKSI
+        let toastTimeout;
+        function showProtectionAlert() {
+            clearTimeout(toastTimeout);
+            protectionToast.classList.remove('translate-y-24', 'opacity-0');
+            protectionToast.classList.add('translate-y-0', 'opacity-100');
+            toastTimeout = setTimeout(() => {
+                protectionToast.classList.remove('translate-y-0', 'opacity-100');
+                protectionToast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // 1. RENDER KARTU GALERI SECARA TERURUT
+        function renderGallery(items) {
+            historyGrid.innerHTML = '';
+            if (items.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            items.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = "group relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-xl hover:shadow-2xl hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1.5 flex flex-col cursor-pointer";
+                
+                // Kontainer Gambar dengan Lapisan Pelindung Transparan
+                card.innerHTML = `
+                    <div class="relative w-full aspect-[4/5] bg-slate-950 overflow-hidden flex items-center justify-center p-2">
+                        <!-- Gambar Materi Sejarah Asli -->
+                        <img src="${item.file}" alt="${item.title}" loading="lazy" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 pointer-events-none select-none" draggable="false" oncontextmenu="return false;">
+                        
+                        <!-- Transparent Protection Shield (Melindungi dari direct right-click & drag) -->
+                        <div class="absolute inset-0 z-10 bg-transparent" oncontextmenu="return false;"></div>
+
+                        <!-- Badge Nomor Urut Materi -->
+                        <div class="absolute top-3 left-3 z-20">
+                            <span class="bg-amber-500 text-slate-950 font-extrabold text-xs px-2.5 py-1 rounded-lg shadow-lg border border-amber-400 flex items-center gap-1">
+                                #${item.num}
+                            </span>
+                        </div>
+
+                        <!-- Hover Overlay Icon Zoom -->
+                        <div class="absolute inset-0 z-20 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
+                            <div class="w-12 h-12 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition-transform duration-300 mb-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-semibold text-white tracking-wide bg-black/80 px-3.5 py-1 rounded-full border border-white/20">Klik Untuk Memperbesar</span>
+                        </div>
+                    </div>
+
+                    <!-- Footer Info Materi -->
+                    <div class="p-4 bg-slate-900 border-t border-slate-800 flex flex-col flex-1 justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Topik #${item.num}</span>
+                                <span class="text-slate-500 group-hover:text-amber-400 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                </span>
+                            </div>
+                            <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1">${item.title}</h3>
+                            <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+
+                // Buka Modal Saat Diklik
+                card.addEventListener('click', () => {
+                    const originalIndex = sejarahData.findIndex(s => s.num === item.num);
+                    openModal(originalIndex);
+                });
+
+                historyGrid.appendChild(card);
+            });
+        }
+
+        // 2. LOGIKA LIGHTBOX MODAL & ZOOM
+        function openModal(index) {
+            currentIndex = index;
+            updateModalContent();
+            resetZoom();
+
+            zoomModal.classList.remove('hidden');
+            setTimeout(() => {
+                zoomModal.classList.remove('opacity-0');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            zoomModal.classList.add('opacity-0');
+            setTimeout(() => {
+                zoomModal.classList.add('hidden');
+                document.body.style.overflow = '';
+                resetZoom();
+            }, 300);
+        }
+
+        function updateModalContent() {
+            const currentItem = sejarahData[currentIndex];
+            modalImg.src = currentItem.file;
+            modalTitle.textContent = currentItem.title;
+            modalSubtitle.textContent = currentItem.subtitle;
+            modalNumberBadge.textContent = `#${currentItem.num}`;
+            modalCounter.textContent = `(${currentIndex + 1} / ${sejarahData.length})`;
+        }
+
+        function updateTransform() {
+            modalTransformContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            zoomLevelText.textContent = `${Math.round(scale * 100)}%`;
+
+            if (scale > 1) {
+                modalViewport.style.cursor = 'grab';
+                modalTransformContainer.classList.remove('smooth-zoom');
+            } else {
+                modalViewport.style.cursor = 'default';
+                modalTransformContainer.classList.add('smooth-zoom');
+                panX = 0;
+                panY = 0;
+                modalTransformContainer.style.transform = `scale(1)`;
+            }
+        }
+
+        function zoomIn() {
+            if (scale < 3.5) {
+                scale = Math.min(scale + 0.5, 3.5);
+                updateTransform();
+            }
+        }
+
+        function zoomOut() {
+            if (scale > 1) {
+                scale = Math.max(scale - 0.5, 1);
+                if (scale === 1) {
+                    panX = 0;
+                    panY = 0;
+                }
+                updateTransform();
+            }
+        }
+
+        function resetZoom() {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % sejarahData.length;
+            resetZoom();
+            updateModalContent();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + sejarahData.length) % sejarahData.length;
+            resetZoom();
+            updateModalContent();
+        }
+
+        // EVENT LISTENERS MODAL
+        btnNext.addEventListener('click', (e) => { e.stopPropagation(); nextSlide(); });
+        btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prevSlide(); });
+        btnCloseModal.addEventListener('click', (e) => { e.stopPropagation(); closeModal(); });
+        btnZoomIn.addEventListener('click', (e) => { e.stopPropagation(); zoomIn(); });
+        btnZoomOut.addEventListener('click', (e) => { e.stopPropagation(); zoomOut(); });
+        btnZoomReset.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
+
+        // Double Click Shield untuk Toggle Zoom
+        modalShield.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            if (scale === 1) {
+                scale = 2;
+                panX = 0;
+                panY = 0;
+            } else {
+                scale = 1;
+                panX = 0;
+                panY = 0;
+            }
+            updateTransform();
+        });
+
+        // Zoom via Scroll Wheel
+        modalViewport.addEventListener('wheel', (e) => {
+            if (!zoomModal.classList.contains('hidden')) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, { passive: false });
+
+        // Drag / Pan Saat Zoom > 1x
+        modalShield.addEventListener('mousedown', (e) => {
+            if (scale > 1) {
+                isDragging = true;
+                startX = e.clientX - panX;
+                startY = e.clientY - panY;
+                modalViewport.style.cursor = 'grabbing';
+            }
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging && scale > 1) {
+                panX = e.clientX - startX;
+                panY = e.clientY - startY;
+                modalTransformContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                if (scale > 1) {
+                    modalViewport.style.cursor = 'grab';
+                }
+            }
+        });
+
+        // Touch Support untuk Mobile Dragging saat Zoom
+        modalShield.addEventListener('touchstart', (e) => {
+            if (scale > 1 && e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - panX;
+                startY = e.touches[0].clientY - panY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (isDragging && scale > 1 && e.touches.length === 1) {
+                panX = e.touches[0].clientX - startX;
+                panY = e.touches[0].clientY - startY;
+                modalTransformContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Navigasi Keyboard
+        window.addEventListener('keydown', (e) => {
+            if (zoomModal.classList.contains('hidden')) return;
+
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === '+' || e.key === '=') zoomIn();
+            if (e.key === '-' || e.key === '_') zoomOut();
+            if (e.key === '0') resetZoom();
+        });
+
+        // Tutup modal jika klik di luar gambar
+        modalViewport.addEventListener('click', (e) => {
+            if (e.target === modalViewport && scale === 1) {
+                closeModal();
+            }
+        });
+
+        // FITUR FILTER / LIVE SEARCH
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            if (!query) {
+                renderGallery(sejarahData);
+                return;
+            }
+            const filtered = sejarahData.filter(item => {
+                return item.num.toLowerCase() === query || 
+                       item.title.toLowerCase().includes(query) ||
+                       item.subtitle.toLowerCase().includes(query) ||
+                       item.desc.toLowerCase().includes(query) ||
+                       `topik ${item.num}`.toLowerCase().includes(query);
+            });
+            renderGallery(filtered);
+        });
+
+        // ========================================================
+        // FITUR PROTEKSI MENYELURUH (ANTI KLIK KANAN, ANTI SAVE)
+        // ========================================================
+
+        // 1. Matikan Klik Kanan di Seluruh Halaman
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showProtectionAlert();
+            return false;
+        });
+
+        // 2. Matikan Drag & Drop Gambar
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // 3. Matikan Shortcut Keyboard Khusus Penyimpanan & Inspeksi
+        document.addEventListener('keydown', (e) => {
+            // F12 (Inspect Element)
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                showProtectionAlert();
+                return false;
+            }
+
+            // Ctrl/Cmd + S, Ctrl/Cmd + U, Ctrl/Cmd + P
+            if ((e.ctrlKey || e.metaKey) && (
+                e.key === 's' || e.key === 'S' ||
+                e.key === 'u' || e.key === 'U' ||
+                e.key === 'p' || e.key === 'P'
+            )) {
+                e.preventDefault();
+                showProtectionAlert();
+                return false;
+            }
+
+            // Ctrl/Cmd + Shift + I, C, J
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (
+                e.key === 'I' || e.key === 'i' ||
+                e.key === 'C' || e.key === 'c' ||
+                e.key === 'J' || e.key === 'j'
+            )) {
+                e.preventDefault();
+                showProtectionAlert();
+                return false;
+            }
+        });
+
+        // Render Pertama Kali
+        renderGallery(sejarahData);
+    </script>
 </body>
 </html>
-```[cite: 3]
